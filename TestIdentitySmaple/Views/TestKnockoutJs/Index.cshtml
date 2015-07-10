@@ -1,0 +1,110 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "title";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section scripts{
+    <script src="~/Scripts/knockout-3.3.0.js"></script>
+    <script src="~/Scripts/knockout.mapping-latest.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            function Friend(name) {
+                this.name = name;
+                this.knowJs = ko.observable(false);
+                this.favoriteJsLibrary = ko.observable('');
+                this.removeFriend = function () {
+                    model.Friends.remove(this);
+                };
+            }
+
+            var model = {
+                firstName: ko.observable('First Name []'),
+                lastName: ko.observable('{LastName}'),
+                Friends: ko.observableArray([new Friend('Shyam'), new Friend('Sita')])
+            };
+            model.fullName = ko.computed(function () {
+                return model.firstName() + ' ' + model.lastName();
+            });
+
+            model.firstName.subscribe(function (newVal) {
+            });
+            model.AddFriend = function () {
+                var newFriendName = $('#newFriendName').val();
+                if (newFriendName != null && newFriendName.length > 0) {
+                    model.Friends.push(new Friend($('#newFriendName').val()));
+                } else {
+                    alert('Name cannot be empty.');
+                }
+            };
+            ko.applyBindings(model);
+        });
+    </script>
+}
+<h2>title</h2>
+<div class="row">
+    <div class="col-xs-6">
+        <p>My first name is <span data-bind="text:firstName"></span></p>
+        <p>My first name is <input type='text' data-bind="value:firstName, valueUpdate:'keyup'" /></p>
+
+        <br />
+        <p>
+            My Last Name is <span data-bind="text:lastName"></span>
+        </p>
+        <p>
+            Enter your last name: <input data-bind="value:lastName" />
+        </p>
+    </div>
+    <div class="col-xs-6">
+        And your full name is <b><span data-bind="text:fullName"></span></b>
+    </div>
+</div>
+<div class="row">
+    <h3>
+        And some of my friends are:
+    </h3>
+    <div class="row col-xs-8">
+        <h3>Add new friend</h3>
+        <hr />
+        Name:
+        <input type="text" id="newFriendName" />
+        <input type="button" data-bind="click:AddFriend, enable:Friends().length<5" class="btn btn-xs btn-success" value="Add New Friend" />
+    </div>
+    <div class="col-xs-12"></div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Know Javascript?
+                </th>
+                <th>
+                    Favorite Js Library
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach:Friends">
+            <tr>
+                <td><span data-bind="text:name"></span></td>
+                <td><input type="checkbox" data-bind="checked:knowJs" /></td>
+                <td><input type="text" name="name" data-bind="value:favoriteJsLibrary, visible:knowJs" /></td>
+                <td><input type="button" data-bind="click:removeFriend" class="btn btn-xs btn-danger" value="Remove" /></td>
+
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">
+                    No of Friends
+                </td>
+                <td>
+                    <span data-bind="text:Friends().length"></span>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

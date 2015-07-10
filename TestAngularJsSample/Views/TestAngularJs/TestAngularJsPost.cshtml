@@ -1,0 +1,42 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Test Angular Post";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section scripts{
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/employeeCreateJquery.js"></script>
+}
+<h2>Test Angular Post</h2>
+<div ng-app="employeeCreate">
+    <div ng-controller="create">
+        <form novalidate class="form-horizontal">
+            <div class="form-group">
+                Name
+                <div class="col-md-10">
+                    <input type="text" ng-model="user.Name" />
+                </div>
+            </div>
+            <div class="form-group">
+                EMail
+                <div class="col-md-10">
+                    <input type="email" ng-model="user.Email" />
+                </div>
+            </div>
+            <div class="form-group">
+                Gender
+                <div class="col-md-10">
+                    <input type="radio" ng-model="user.Gender" value="male" />male
+                    <input type="radio" ng-model="user.Gender" value="female" />female
+                </div>
+            </div>
+            <div class="well-sm">
+                <input type="button" ng-click="reset()" value="Reset" />
+                <input type="submit" ng-click="update(user)" value="Save" />
+            </div>
+        </form>
+        <pre>form = {{user | json}}</pre>
+        <pre>master = {{master | json}}</pre>
+    </div>
+</div>

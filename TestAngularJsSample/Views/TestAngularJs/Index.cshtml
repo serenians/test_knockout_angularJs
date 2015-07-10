@@ -1,0 +1,54 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Test Angular Js";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Test Angular Js</h2>
+@section scripts{
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/main.js"></script>
+}
+
+<div ng-app="main">
+
+    <div ng-controller="firstController">
+        <input type="text" ng-model="data.Message" />
+        <h3>
+            {{data.Message}}
+        </h3>
+    </div>
+
+    <div class="jumbotron">
+        <h5>Second Controller</h5>
+        <hr />
+        <div ng-controller="secondController">
+            Reversed Message:<h4>{{ReversedMessage(data.Message)}}</h4>
+            <br />
+            Reversed Message using filter: <h4>{{data.Message| reverseString}}</h4>
+        </div>
+    </div>
+
+    <div class="row" ng-controller="FriendsController">
+        <input type="text" placeholder="Search my friends" ng-model="search.name" />
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Know Js
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="friend in Friends.ListOfFriend | filter:search | orderBy:'-name' | limitTo:'2'  ">
+                    <td>{{friend.name|uppercase}}</td>
+                    <td>{{friend.knowJs|lowercase}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

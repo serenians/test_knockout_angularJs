@@ -1,0 +1,131 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Test Mapping Post";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Test Mapping Post</h2>
+@section scripts{
+    <script src="~/Scripts/jquery.common.js"></script>
+    <script src="~/Scripts/knockout-3.3.0.js"></script>
+    <script src="~/Scripts/knockout.mapping-latest.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            function getFriend() {
+                return {
+                    Name: 'New Name',
+                    KnowJs: false,
+                    FavoriteJsLibrary: 'Angular'
+                };
+                @*$.get('@Url.Action("GetFriend")', {}, function (resp) {
+                    console.log(resp.length);
+                    return resp[0];
+                });*@
+            }
+
+            var model = {
+                FirstName: ko.observable('Sagar'),
+                LastName: ko.observable('Khyaju'),
+                Friends: ko.observableArray([new Friend(new getFriend())])
+            };
+            model.fullName = ko.computed(function () {
+                return model.FirstName() + ' ' + model.LastName();
+            });
+
+            function Friend(friend) {
+                var map = ko.mapping.fromJS(friend);
+                map.removeFriend = function () {
+                    model.Friends.remove(map);
+                };
+                return map;
+            }
+
+            model.FirstName.subscribe(function (newVal) {
+            });
+            model.AddFriend = function () {
+                model.Friends.push(new Friend(getFriend()));
+            };
+
+            model.postData = function postData() {
+                var postModel = ko.mapping.toJS(model);
+                console.log(postModel);
+                $.postJSON('@Url.Action("TestMappingPost")', { model: postModel }, function (resp) {
+                    console.log(resp);
+                });
+            };
+
+            ko.applyBindings(model);
+        });
+    </script>
+}
+
+<div class="row">
+    <div class="col-xs-6">
+        <p>My first name is <span data-bind="text:FirstName"></span></p>
+        <p>My first name is <input type='text' data-bind="value:FirstName, valueUpdate:'keyup'" /></p>
+
+        <br />
+        <p>
+            My Last Name is <span data-bind="text:LastName"></span>
+        </p>
+        <p>
+            Enter your last name: <input data-bind="value:LastName" />
+        </p>
+    </div>
+    <div class="col-xs-6">
+        And your full name is <b><span data-bind="text:fullName"></span></b>
+    </div>
+</div>
+<div class="row">
+    <h3>
+        And some of my friends are:
+    </h3>
+    <div class="row col-xs-8">
+        <h3>Add new friend</h3>
+        <hr />
+        Name:
+        <input type="text" id="newFriendName" />
+        <input type="button" data-bind="click:AddFriend, enable:Friends().length<5" class="btn btn-xs btn-success" value="Add New Friend" />
+    </div>
+    <div class="col-xs-12"></div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Know Javascript?
+                </th>
+                <th>
+                    Favorite Js Library
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach:Friends">
+            <tr>
+                <td><span data-bind="text:Name"></span></td>
+                <td><input type="checkbox" data-bind="checked:KnowJs" /></td>
+                <td><input type="text" name="name" data-bind="value:FavoriteJsLibrary, visible:KnowJs" /></td>
+                <td><input type="button" data-bind="click:removeFriend" class="btn btn-xs btn-danger" value="Remove" /></td>
+
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">
+                    No of Friends
+                </td>
+                <td>
+                    <span data-bind="text:Friends().length"></span>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="well-sm">
+        <input type="button" class=" btn btn-primary" value="post" data-bind="click:postData" />
+    </div>
+</div>
